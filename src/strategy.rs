@@ -1,14 +1,15 @@
 pub trait Strategy {
-    fn go(&self, state: i32) -> (i32, Vec<bool>);
+    fn go(&self, prevState: i32) -> (i32, Vec<bool>);
 }
 
-pub struct RlAntStrategy {}
+pub struct RlAntStrategy {
+}
 
 impl Strategy for RlAntStrategy {
-    fn go(&self, state: i32) -> (i32, Vec<bool>) {
+    fn go(&self, prevState: i32) -> (i32, Vec<bool>) {
         let mut steps: Vec<bool> = Vec::new();
         let new_state;
-        match state {
+        match prevState {
             0 => {
                 steps.push(true);
                 new_state = 1;

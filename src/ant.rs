@@ -11,9 +11,8 @@ pub enum Direction {
 
 pub struct Ant<'a> {
     field_size: Size,
-    position: Point,
+    pub position: Point,
     direction: Direction,
-    state: i32,
     strategy: &'a dyn Strategy
 }
 
@@ -22,25 +21,23 @@ impl<'a> Ant<'a> {
         field_size: Size,
         position: Point,
         strategy: &'a dyn Strategy,
-        initial_state: i32,
     ) -> Ant {
         Ant {
             field_size,
             position,
             strategy,
             direction: Direction::Up,
-            state: initial_state,
         }
     }
 
-    pub fn go(&mut self) {
-        let (new_state, steps) = self.strategy.go(self.state);
+    pub fn go(&mut self, prevState: i32) -> i32 {
+        let (new_state, steps) = self.strategy.go(prevState);
         for step in steps
         {
             if step { self.turn_right(); } else { self.turn_left(); }
         }
-        self.state = new_state;
         self.move_forward();
+        new_state
     }
 
     pub fn move_forward(&mut self) {
@@ -101,6 +98,19 @@ impl<'a> Ant<'a> {
 impl<'a> std::fmt::Display for Ant<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
         f.write_str(format!("Pos: {}", &self.position).as_str())?;
+        std::result::Result::Ok(())
+    }
+}
+
+impl std::fmt::Display for Direction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+        f.write_str(match self 
+            {
+                Direction::Up => "UP",
+                Direction::Down => "DOWN",
+                Direction::Left => "LEFT",
+                Direction::Right => "Right"
+            })?;
         std::result::Result::Ok(())
     }
 }
