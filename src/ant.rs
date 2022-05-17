@@ -30,8 +30,8 @@ impl<'a> Ant<'a> {
         }
     }
 
-    pub fn go(&mut self, prevState: i32) -> i32 {
-        let (new_state, steps) = self.strategy.go(prevState);
+    pub fn go(&mut self, prev_state: i32) -> i32 {
+        let (new_state, steps) = self.strategy.go(prev_state);
         for step in steps
         {
             if step { self.turn_right(); } else { self.turn_left(); }

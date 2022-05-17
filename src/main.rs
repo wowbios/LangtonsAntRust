@@ -37,17 +37,18 @@ impl<'a> Model<'a> {
 
     fn go(&mut self)
     {
-        let prevPos = Point::new(self.ant.position.x, self.ant.position.y);
-        let a = &mut self.field[prevPos.x as usize];
-        let prev_state = &a[prevPos.y as usize];
+        let prev_pos = Point::new(self.ant.position.x, self.ant.position.y);
+        let a = &mut self.field[prev_pos.x as usize];
+        let prev_state = &a[prev_pos.y as usize];
         let new_state = self.ant.go(*prev_state);
-        a[prevPos.y as usize] = new_state;
+        a[prev_pos.y as usize] = new_state;
 
-        self.events.push((prevPos, new_state));
+        self.events.push((prev_pos, new_state));
     }
 }
 
 fn model<'a>(_app: &App) -> Model<'a> {
+    _app.set_loop_mode(LoopMode::rate_fps(500.0));
     Model::new()
 }
 
@@ -60,6 +61,7 @@ fn update(_app: &App, _model: &mut Model, _update: Update) {
 fn view(_app: &App, _model: &Model, frame: Frame){
     let draw = _app.draw();
     const SCALE: f32 = 4.0;
+    const OFFSET: f32 = -200.0;
     // draw.background().color(BLACK);
     for e in &_model.events
     {
@@ -68,7 +70,9 @@ fn view(_app: &App, _model: &Model, frame: Frame){
         .color(color)
         .w(SCALE)
         .h(SCALE)
-        .x_y(e.0.x as f32 * SCALE, e.0.y as f32 * SCALE);
+        .x_y(
+            e.0.x as f32 * SCALE + OFFSET,
+            e.0.y as f32 * SCALE + OFFSET);
     }
     
 
