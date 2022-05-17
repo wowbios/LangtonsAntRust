@@ -1,46 +1,24 @@
-use crate::ant::Ant;
+pub trait Strategy {
+    fn go(&self, state: i32) -> (i32, Vec<bool>);
+}
 
-// pub trait Strategy<'a, 'b>
-// {
-//     fn go(&self, ant: &'b mut Ant, state: &'b i32) -> i32;
-// }
+pub struct RlAntStrategy {}
 
-// pub struct RL{}
-// impl<'a, 'b> Strategy<'a,'b> for RL
-// {
-    
-// fn go(&self, ant: &'b mut Ant, state: &'b i32) -> i32 { 
-//     let new_state;
-//         match state {
-//             0 => {
-//                 ant.turn_right();
-//                 new_state = 1;
-//             }
-//             1 => {
-//                 ant.turn_left();
-//                 new_state = 0;
-//             },
-//             _ => panic!("shit happened")
-//         }
-//         ant.move_forward();
-//         new_state
-//  }
-// }
-
-pub fn rl_ant(ant: &mut Ant, state: i32) -> i32
-    {
+impl Strategy for RlAntStrategy {
+    fn go(&self, state: i32) -> (i32, Vec<bool>) {
+        let mut steps: Vec<bool> = Vec::new();
         let new_state;
         match state {
             0 => {
-                ant.turn_right();
+                steps.push(true);
                 new_state = 1;
             }
             1 => {
-                ant.turn_left();
+                steps.push(false);
                 new_state = 0;
-            },
-            _ => panic!("shit happened")
+            }
+            _ => panic!("shit happened"),
         }
-        ant.move_forward();
-        new_state
+        (new_state, steps)
     }
+}

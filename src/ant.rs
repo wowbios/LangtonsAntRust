@@ -1,27 +1,27 @@
 use crate::point::Point;
 use crate::size::Size;
+use crate::strategy::Strategy;
 
-enum Direction {
+pub enum Direction {
     Up,
     Right,
     Down,
     Left,
 }
 
-
-pub struct Ant {
+pub struct Ant<'a> {
     field_size: Size,
     position: Point,
     direction: Direction,
     state: i32,
-    strategy: Box<dyn Fn(&mut Ant, i32) -> i32>
+    strategy: &'a dyn Strategy
 }
 
-impl Ant {
+impl<'a> Ant<'a> {
     pub fn new(
         field_size: Size,
         position: Point,
-        strategy: Box<dyn Fn(&mut Ant, i32) -> i32>,
+        strategy: &'a dyn Strategy,
         initial_state: i32,
     ) -> Ant {
         Ant {
@@ -34,19 +34,13 @@ impl Ant {
     }
 
     pub fn go(&mut self) {
-        self.state = match self.state {
-            0 => {
-                self.turn_right();
-                self.move_forward();
-                1
-            }
-            1 => {
-                self.turn_left();
-                self.move_forward();                
-                0
-            },
-            _ => panic!("shit happened")
+        let (new_state, steps) = self.strategy.go(self.state);
+        for step in steps
+        {
+            if step { self.turn_right(); } else { self.turn_left(); }
         }
+        self.state = new_state;
+        self.move_forward();
     }
 
     pub fn move_forward(&mut self) {
@@ -104,7 +98,7 @@ impl Ant {
     }
 }
 
-impl std::fmt::Display for Ant {
+impl<'a> std::fmt::Display for Ant<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
         f.write_str(format!("Pos: {}", &self.position).as_str())?;
         std::result::Result::Ok(())
