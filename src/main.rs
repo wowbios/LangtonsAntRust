@@ -48,12 +48,10 @@ impl<'a> Model<'a> {
 }
 
 fn model<'a>(_app: &App) -> Model<'a> {
-    _app.set_loop_mode(LoopMode::rate_fps(500.0));
     Model::new()
 }
 
 fn update(_app: &App, _model: &mut Model, _update: Update) {
-    
     _model.events.clear();
     _model.go();
 }
