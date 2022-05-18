@@ -9,19 +9,15 @@ pub enum Direction {
     Left,
 }
 
-pub struct Ant<'a> {
+pub struct Ant<TStrategy: Strategy> {
     field_size: Size,
     pub position: Point,
     direction: Direction,
-    strategy: &'a dyn Strategy
+    strategy: TStrategy
 }
 
-impl<'a> Ant<'a> {
-    pub fn new(
-        field_size: Size,
-        position: Point,
-        strategy: &'a dyn Strategy,
-    ) -> Ant {
+impl<TStrategy: Strategy> Ant<TStrategy> {
+    pub fn new(field_size: Size, position: Point, strategy: TStrategy) -> Ant<TStrategy> {
         Ant {
             field_size,
             position,
@@ -32,8 +28,7 @@ impl<'a> Ant<'a> {
 
     pub fn go(&mut self, prev_state: i32) -> i32 {
         let (new_state, steps) = self.strategy.go(prev_state);
-        for step in steps
-        {
+        for step in steps {
             if step { self.turn_right(); } else { self.turn_left(); }
         }
         self.move_forward();
@@ -95,22 +90,21 @@ impl<'a> Ant<'a> {
     }
 }
 
-impl<'a> std::fmt::Display for Ant<'a> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
+impl<'a, TStrategy: Strategy> std::fmt::Display for Ant<TStrategy> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
         f.write_str(format!("Pos: {}", &self.position).as_str())?;
-        std::result::Result::Ok(())
+        Ok(())
     }
 }
 
 impl std::fmt::Display for Direction {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
-        f.write_str(match self 
-            {
-                Direction::Up => "UP",
-                Direction::Down => "DOWN",
-                Direction::Left => "LEFT",
-                Direction::Right => "Right"
-            })?;
-        std::result::Result::Ok(())
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        f.write_str(match self {
+            Direction::Up => "UP",
+            Direction::Down => "DOWN",
+            Direction::Left => "LEFT",
+            Direction::Right => "Right",
+        })?;
+        Ok(())
     }
 }
